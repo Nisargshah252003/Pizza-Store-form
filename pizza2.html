@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffe5e2;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .btn {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .btn-order {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .order-summary {
+            margin-top: 20px;
+            background-color: #f7f7f7;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            color: #555;
+        }
+        
+        .order-summary h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #444;
+        }
+        
+        .order-summary p {
+            margin: 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Pizza Store</h1>
+
+        <label for="pizza">Pizza</label>
+        <select id="pizza">
+            <option value="Margherita">Margherita</option>
+            <option value="Pepperoni">Pepperoni</option>
+            <option value="BBQ Chicken">BBQ Chicken</option>
+        </select>
+
+        <label for="size">Size</label>
+        <select id="size">
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+        </select>
+
+        <label for="price">Price</label>
+        <input type="number" id="price" value="200" readonly>
+
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" value="1" min="1">
+
+        <label for="bill">Bill</label>
+        <input type="number" id="bill" readonly>
+
+        <div id="x1">
+            <label for="contact" id="ContactDetails">Contact Details</label>
+
+            <div class="country-code-container">
+                <select id="countryCode">
+                    <option value="+1" data-flag="us" class="flag-icon flag-icon-us">+1 United States</option>
+                    <option value="+44" data-flag="gb" class="flag-icon flag-icon-gb">+44 United Kingdom</option>
+                    <option value="+91" data-flag="in" class="flag-icon flag-icon-in">+91 India</option>
+                    <option value="+61" data-flag="au" class="flag-icon flag-icon-au">+61 Australia</option>
+                    <option value="+81" data-flag="jp" class="flag-icon flag-icon-jp">+81 Japan</option>
+                </select>
+                <input type="text" id="contactNumber" placeholder="Enter your phone number">
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn btn-order" onclick="orderPizza()">Order</button>
+            <button class="btn btn-cancel" onclick="cancelOrder()">Cancel</button>
+        </div>
+
+        <div class="order-summary" id="order-summary">
+            <h2>Order Details</h2>
+            <p id="summary-details"></p>
+        </div>
+    </div>
+
+    <script>
+        const prices = {
+            "Margherita": {
+                "Small": 100,
+                "Medium": 150,
+                "Large": 200
+            },
+            "Pepperoni": {
+                "Small": 120,
+                "Medium": 180,
+                "Large": 250
+            },
+            "BBQ Chicken": {
+                "Small": 150,
+                "Medium": 220,
+                "Large": 300
+            }
+        };
+
+        document.getElementById('pizza').addEventListener('change', updatePrice);
+        document.getElementById('size').addEventListener('change', updatePrice);
+
+        function updatePrice() {
+            const pizza = document.getElementById('pizza').value;
+            const size = document.getElementById('size').value;
+            const price = prices[pizza][size];
+            document.getElementById('price').value = price;
+        }
+
+        function orderPizza() {
+            const pizza = document.getElementById('pizza').value;
+            const size = document.getElementById('size').value;
+            const price = parseInt(document.getElementById('price').value);
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const bill = price * quantity;
+
+            document.getElementById('bill').value = bill;
+
+            const summary = `Pizza: ${pizza}<br>Size: ${size}<br>Quantity: ${quantity}<br>Bill: ₹${bill}`;
+            document.getElementById('summary-details').innerHTML = summary;
+
+            // Generate a simple order ID
+            const orderId = 'ORD' + Math.floor(Math.random() * 1000000);
+
+            Swal.fire({
+                title: 'Confirm Order',
+                html: summary,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Edit',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#dc3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('order-summary').style.display = 'block';
+                    Swal.fire({
+                        title: 'Order Placed!',
+                        html: `Your order ID is <strong>${orderId}</strong>.<br><br>
+                               <a href="https://yourtrackingwebsite.com?orderId=${orderId}" target="_blank" style="color: #3085d6;">Click here to track your order.</a>`,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Redirect to the tracking page
+                        window.location.href = `https://yourtrackingwebsite.com?orderId=${orderId}`;
+                    });
+                }
+            });
+        }
+
+        function cancelOrder() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Your order details will be cleared!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#28a745'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('pizza').value = 'Margherita';
+                    document.getElementById('size').value = 'Small';
+                    document.getElementById('quantity').value = 1;
+                    document.getElementById('bill').value = '';
+                    document.getElementById('order-summary').style.display = 'none';
+                    Swal.fire(
+                        'Cancelled',
+                        'Your order details have been cleared.',
+                        'success'
+                    );
+                }
+            });
+        }
+
+        // Initialize price on page load
+        updatePrice();
+    </script>
+
+</body>
+
+</html>
