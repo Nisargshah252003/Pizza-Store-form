@@ -194,8 +194,8 @@
             const summary = `Pizza: ${pizza}<br>Size: ${size}<br>Quantity: ${quantity}<br>Bill: ₹${bill}`;
             document.getElementById('summary-details').innerHTML = summary;
 
-            // Generate a simple order ID
-            const orderId = 'ORD' + Math.floor(Math.random() * 1000000);
+            // Generate a unique order ID using current timestamp and a random number
+            const orderId = 'ORD' + Date.now() + Math.floor(Math.random() * 1000);
 
             Swal.fire({
                 title: 'Confirm Order',
